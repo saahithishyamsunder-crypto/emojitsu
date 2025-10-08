@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Emojitsu</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Quicksand', Arial, sans-serif;
+            background: linear-gradient(135deg,#9320a29f,#fad0c4);
+            overflow-x: hidden;
+        }
+        .emoji-bg {
+            position: fixed;
+            z-index: -1;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        .emoji-bg span {
+            position: absolute;
+            font-size: 2.5rem;
+            opacity: 0.6;
+            animation: floatUp 10s linear infinite;
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(1);
+                opacity: 0.6;
+            }
+            70% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.2);
+                opacity: 0;
+            }
+        }
+        .main-title {
+            font-size: 3rem;
+            letter-spacing: 8px;
+            color: #ffbd39;
+            background: rgba(0,0,0,0.70);
+            padding: 16px 32px;
+            border-radius: 14px;
+            margin-bottom: 38px;
+            box-shadow: 0 10px 20px rgba(56,50,70,0.2);
+            text-align: center;
+        }
+        .home {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+        #startBtn {
+            font-size: 1.5rem;
+            padding: 14px 34px;
+            color: white;
+            background: #443fff;
+            border: none;
+            border-radius: 8px;
+            margin-top: 22px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(68,63,255,0.20);
+            transition: background 0.2s;
+        }
+        #startBtn:hover {
+            background: #291ec3;
+        }
+        #gameContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            z-index: 2;
+        }
+        #gameBoard {
+            display: grid;
+            gap: 10px;
+            background: rgba(30, 42, 58, 0.85);
+            padding: 24px;
+            border-radius: 16px;
+            margin-top: 18px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+        }
+        .tile {
+            background-color: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+            transition: background 0.18s, transform 0.14s;
+            min-width: 60px;
+            min-height: 75px;
+        }
+        .tile.selected {
+            background-color: #aaf0fb;
+            transform: scale(1.1);
+        }
+        #status {
+            font-size: 1.3rem;
+            background: rgba(0,0,0,0.55);
+            color: #00ffe0;
+            padding: 6px 16px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            margin-top: 6px;
+            min-height: 36px;
+            text-align: center;
+        }
+        #nextLevelButton {
+            font-size: 1.25rem;
+            margin-top: 14px;
+            padding: 10px 24px;
+            border: none;
+            background-color: #ff6347;
+            color: white;
+            cursor: pointer;
+            border-radius: 7px;
+            visibility: hidden;
+        }
+        #nextLevelButton:hover {
+            background-color: #e5533d;
+        }
+        @media (max-width: 700px) {
+            .main-title {
+                font-size: 2rem;
+                padding: 6px 12px;
+            }
+            #gameBoard {
+                padding: 8px;
+            }
+            .tile {
+                min-width: 38px;
+                min-height: 48px;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="emoji-bg" id="emojiBg"></div>
+    <div class="home" id="homePage">
+        <div class="main-title">EMOJITSU</div>
+        <button id="startBtn">Start Game</button>
+    </div>
+    <div id="gameContainer" style="display:flex;">
+        <div id="status"></div>
+        <div id="gameBoard"></div>
+        <button id="nextLevelButton" onclick="nextLevel()">Next Level</button>
+    </div>
+
+    <script>
+        // Emoji sets for each level
+        const faceEmojis = ['😀', '😎', '😂', '😍', '🤓', '😡', '😱', '😴'];
+        const foodEmojis = ['🍎', '🍔', '🍩', '🍕', '🌮', '🍣', '🍦', '🍉'];
+        const animalEmojis = ['🐶', '🦁', '🐵', '🐧', '🐸', '🐝', '🐢', '🦉', '🐳','🐕','🐈','🐂','🐄','🐩','🐎','🦓','🦒','🦘'];
+
+        // Background emojis (mix for visual effect)
+        const bgEmojis = ['🍉', '🎠', '🐼', '🤣', '🌹', '🌈', '😘', '🚗', '🌏', '🍀', '🐳', '👍', '🦋', '😈', '🥶', '👩🏻‍🚀', '🎂', '🐞'];
+        const emojiBg = document.getElementById('emojiBg');
+        function generateEmojis() {
+            for(let i=0;i<32;i++) {
+                const s = document.createElement('span');
+                s.innerText = bgEmojis[Math.floor(Math.random()*bgEmojis.length)];
+                s.style.left = Math.random()*96 + 'vw';
+                s.style.fontSize = (2.2 + Math.random()*2) + 'rem';
+                s.style.animationDuration = (8 + Math.random()*5) + 's';
+                s.style.animationDelay = (Math.random()*9)+'s';
+                emojiBg.appendChild(s);
+            }
+        }
+        generateEmojis();
+
+        let level = 2; // 2, 4, 6 grid sizes
+        let tiles = [];
+        let selectedTiles = [];
+
+        document.getElementById('startBtn').onclick = function() {
+            document.getElementById('homePage').style.display = "none";
+            document.getElementById('gameContainer').style.display = "flex";
+            level = 2; // start at level 2
+            tiles = [];
+            selectedTiles = [];
+            document.getElementById('status').innerText = "";
+            createBoard();
+        };
+
+        function createBoard() {
+            document.getElementById('nextLevelButton').style.visibility = "hidden";
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = '';
+            let gridSize, numPairs, emojis;
+            if (level === 2) {
+                gridSize = 2; numPairs = 2;
+                emojis = faceEmojis;
+            } else if (level === 4) {
+                gridSize = 4; numPairs = 8;
+                emojis = foodEmojis;
+            } else {
+                gridSize = 6; numPairs = 18;
+                emojis = animalEmojis;
+            }
+            gameBoard.style.gridTemplateColumns = `repeat(${gridSize}, minmax(35px, 80px))`;
+            gameBoard.style.gridTemplateRows = `repeat(${gridSize}, minmax(45px, 100px))`;
+
+            // Prepare paired and shuffled tiles
+            let tilePairs = emojis.slice(0, numPairs).concat(emojis.slice(0, numPairs));
+            tilePairs.sort(() => Math.random() - 0.5);
+
+            tiles = [];
+            selectedTiles = [];
+
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                let tile = document.createElement('div');
+                tile.classList.add('tile');
+                tile.dataset.symbol = tilePairs[i];
+                tile.innerHTML = "?";
+                tile.addEventListener('click', () => selectTile(tile));
+                gameBoard.appendChild(tile);
+                tiles.push(tile);
+            }
+        }
+
+        function selectTile(tile) {
+            if (selectedTiles.length < 2 && !tile.classList.contains('selected') && tile.innerHTML === "?") {
+                tile.classList.add('selected');
+                tile.innerHTML = tile.dataset.symbol;
+                selectedTiles.push(tile);
+            }
+            if (selectedTiles.length === 2) {
+                setTimeout(checkMatch, 650);
+            }
+        }
+
+        function checkMatch() {
+            if (selectedTiles[0].dataset.symbol === selectedTiles[1].dataset.symbol) {
+                selectedTiles[0].style.visibility = 'hidden';
+                selectedTiles[1].style.visibility = 'hidden';
+            } else {
+                selectedTiles[0].classList.remove('selected');
+                selectedTiles[1].classList.remove('selected');
+                selectedTiles[0].innerHTML = "?";
+                selectedTiles[1].innerHTML = "?";
+            }
+            selectedTiles = [];
+            checkWin();
+        }
+
+        function checkWin() {
+            if (document.querySelectorAll('.tile:not([style*="hidden"])').length === 0) {
+                document.getElementById('status').innerText = `Level ${level} Complete!`;
+                document.getElementById('nextLevelButton').style.visibility = "visible";
+            }
+        }
+
+        function nextLevel() {
+            if (level === 2) {
+                level = 4;
+            } else if (level === 4) {
+                level = 6;
+            } else {
+                level = 2;
+            }
+            tiles = [];
+            selectedTiles = [];
+            document.getElementById('status').innerText = "";
+            createBoard();
+        }
+    </script>
+</body>
+</html>
