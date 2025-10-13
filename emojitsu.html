@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Emojitsu</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Quicksand', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            overflow-x: hidden;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .emoji-bg {
+            position: fixed;
+            z-index: 0;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        .emoji-bg span {
+            position: absolute;
+            font-size: 2.5rem;
+            opacity: 0.7;
+            animation: floatUp 10s linear infinite;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(1) rotate(0deg);
+                opacity: 0.7;
+            }
+            70% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.2) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        .main-title {
+            font-size: 4rem;
+            font-weight: 900;
+            letter-spacing: 12px;
+            color: #fff;
+            background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255,255,255,0.5);
+            padding: 20px 40px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            text-align: center;
+            animation: titlePulse 2s ease-in-out infinite;
+            backdrop-filter: blur(10px);
+            background-color: rgba(0,0,0,0.3);
+            -webkit-text-fill-color: #ffbd39;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .home {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+        .subtitle {
+            font-size: 1.3rem;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            max-width: 500px;
+            padding: 0 20px;
+        }
+        #startBtn {
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 18px 50px;
+            color: white;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 50px;
+            margin-top: 22px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(245,87,108,0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+        #startBtn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        #startBtn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        #startBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(245,87,108,0.6);
+        }
+        #startBtn:active {
+            transform: translateY(0);
+        }
+        #gameContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            z-index: 2;
+        }
+        .level-indicator {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        .level-dot {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.2);
+            border: 3px solid rgba(255,255,255,0.5);
+            color: rgba(255,255,255,0.6);
+            transition: all 0.3s ease;
+        }
+        .level-dot.active {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            border-color: #fff;
+            color: #fff;
+            transform: scale(1.2);
+            box-shadow: 0 5px 20px rgba(245,87,108,0.6);
+            filter: blur(0);
+        }
+        .level-dot.completed {
+            background: linear-gradient(135deg, #56ab2f, #a8e063);
+            border-color: #56ab2f;
+            color: #fff;
+            filter: blur(0);
+        }
+        .level-dot:not(.active):not(.completed) {
+            filter: blur(2px);
+        }
+        #gameBoard {
+            display: grid;
+            gap: 10px;
+            background: rgba(30, 42, 58, 0.85);
+            backdrop-filter: blur(15px);
+            padding: 24px;
+            border-radius: 16px;
+            margin-top: 18px;
+            margin-bottom: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .tile {
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            min-width: 60px;
+            min-height: 75px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        .tile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        .tile.selected {
+            background: linear-gradient(135deg, #aaf0fb, #48dbfb);
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 20px rgba(72,219,251,0.5);
+        }
+        #status {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            color: #00ffe0;
+            padding: 12px 24px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            margin-top: 6px;
+            min-height: 40px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        #nextLevelButton {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-top: 14px;
+            padding: 12px 30px;
+            border: none;
+            background: linear-gradient(135deg, #ff6347, #ff9068);
+            color: white;
+            cursor: pointer;
+            border-radius: 50px;
+            visibility: hidden;
+            box-shadow: 0 5px 20px rgba(255,99,71,0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        #nextLevelButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255,99,71,0.6);
+        }
+        #backBtn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: none;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            color: white;
+            cursor: pointer;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: none;
+        }
+        #backBtn:hover {
+            background: rgba(0,0,0,0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+        .tile.matched {
+            animation: matchPulse 0.5s ease;
+        }
+        @keyframes matchPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3) rotate(10deg); }
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            pointer-events: none;
+            z-index: 1000;
+            animation: confettiFall 2s linear forwards;
+        }
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        @media (max-width: 700px) {
+            .main-title {
+                font-size: 2rem;
+                padding: 6px 12px;
+                letter-spacing: 4px;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+            #startBtn {
+                font-size: 1.3rem;
+                padding: 12px 30px;
+            }
+            #gameBoard {
+                padding: 8px;
+            }
+            .tile {
+                min-width: 38px;
+                min-height: 48px;
+                font-size: 1.3rem;
+            }
+            .level-dot {
+                width: 40px;
+                height: 40px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button id="backBtn">← Back to Home</button>
+    <div class="emoji-bg" id="emojiBg"></div>
+    <div class="home" id="homePage">
+        <div class="main-title">🎮 EMOJITSU 🎮</div>
+        <div class="subtitle">Match the emojis and master all levels! Fun for kids and adults alike! 🧠✨</div>
+        <button id="startBtn">Start Game</button>
+    </div>
+    <div id="gameContainer" style="display:none;">
+        <div class="level-indicator" id="levelIndicator">
+            <div class="level-dot" data-level="2">1</div>
+            <div class="level-dot" data-level="4">2</div>
+            <div class="level-dot" data-level="6">3</div>
+        </div>
+        <div id="status">Moves: <span id="moveCounter">0</span></div>
+        <div id="gameBoard"></div>
+        <button id="nextLevelButton" onclick="nextLevel()">Next Level</button>
+    </div>
+
+    <script>
+        // Emoji sets for each level
+        const faceEmojis = ['😀', '😎', '😂', '😍', '🤓', '😡', '😱', '😴'];
+        const foodEmojis = ['🍎', '🍔', '🍩', '🍕', '🌮', '🍣', '🍦', '🍉'];
+        const animalEmojis = ['🐶', '🦁', '🐵', '🐧', '🐸', '🐝', '🐢', '🦉', '🐳','🐕','🐈','🐂','🐄','🐩','🐎','🦓','🦒','🦘'];
+
+        // Background emojis (mix for visual effect)
+        const bgEmojis = ['🍉', '🎠', '🐼', '🤣', '🌹', '🌈', '😘', '🚗', '🌏', '🍀', '🐳', '👍', '🦋', '😈', '🥶', '👩🏻‍🚀', '🎂', '🐞'];
+        const emojiBg = document.getElementById('emojiBg');
+        function generateEmojis() {
+            for(let i=0;i<32;i++) {
+                const s = document.createElement('span');
+                s.innerText = bgEmojis[Math.floor(Math.random()*bgEmojis.length)];
+                s.style.left = Math.random()*96 + 'vw';
+                s.style.fontSize = (2.2 + Math.random()*2) + 'rem';
+                s.style.animationDuration = (8 + Math.random()*5) + 's';
+                s.style.animationDelay = (Math.random()*9)+'s';
+                emojiBg.appendChild(s);
+            }
+        }
+        generateEmojis();
+
+        let level = 2; // 2, 4, 6 grid sizes
+        let tiles = [];
+        let selectedTiles = [];
+        let completedLevels = [];
+        let moves = 0;
+
+        function updateLevelIndicator() {
+            const dots = document.querySelectorAll('.level-dot');
+            dots.forEach(dot => {
+                const dotLevel = parseInt(dot.dataset.level);
+                dot.classList.remove('active', 'completed');
+                
+                if (completedLevels.includes(dotLevel)) {
+                    dot.classList.add('completed');
+                } else if (dotLevel === level) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+
+        function updateMoveCounter() {
+            document.getElementById('moveCounter').innerText = moves;
+        }
+
+        document.getElementById('startBtn').onclick = function() {
+            document.getElementById('homePage').style.display = "none";
+            document.getElementById('gameContainer').style.display = "flex";
+            document.getElementById('backBtn').style.display = "block";
+            level = 2; // start at level 2
+            tiles = [];
+            selectedTiles = [];
+            completedLevels = [];
+            moves = 0;
+            updateMoveCounter();
+            updateLevelIndicator();
+            createBoard();
+        };
+
+        document.getElementById('backBtn').onclick = function() {
+            // Confirm before going back if game is in progress
+            if (document.getElementById('gameContainer').style.display === "flex") {
+                if (confirm("Are you sure you want to go back? Your progress will be lost.")) {
+                    document.getElementById('gameContainer').style.display = "none";
+                    document.getElementById('homePage').style.display = "flex";
+                    document.getElementById('backBtn').style.display = "none";
+                    // Reset game state
+                    level = 2;
+                    tiles = [];
+                    selectedTiles = [];
+                    completedLevels = [];
+                    moves = 0;
+                }
+            }
+        };
+
+        function createBoard() {
+            document.getElementById('nextLevelButton').style.visibility = "hidden";
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = '';
+            let gridSize, numPairs, emojis;
+            if (level === 2) {
+                gridSize = 2; numPairs = 2;
+                emojis = faceEmojis;
+            } else if (level === 4) {
+                gridSize = 4; numPairs = 8;
+                emojis = foodEmojis;
+            } else {
+                gridSize = 6; numPairs = 18;
+                emojis = animalEmojis;
+            }
+            gameBoard.style.gridTemplateColumns = `repeat(${gridSize}, minmax(35px, 80px))`;
+            gameBoard.style.gridTemplateRows = `repeat(${gridSize}, minmax(45px, 100px))`;
+
+            // Prepare paired and shuffled tiles
+            let tilePairs = emojis.slice(0, numPairs).concat(emojis.slice(0, numPairs));
+            tilePairs.sort(() => Math.random() - 0.5);
+
+            tiles = [];
+            selectedTiles = [];
+
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                let tile = document.createElement('div');
+                tile.classList.add('tile');
+                tile.dataset.symbol = tilePairs[i];
+                tile.innerHTML = "👀";
+                tile.addEventListener('click', () => selectTile(tile));
+                gameBoard.appendChild(tile);
+                tiles.push(tile);
+            }
+            updateLevelIndicator();
+        }
+
+        function selectTile(tile) {
+            if (selectedTiles.length < 2 && !tile.classList.contains('selected') && tile.innerHTML === "👀") {
+                tile.classList.add('selected');
+                tile.innerHTML = tile.dataset.symbol;
+                selectedTiles.push(tile);
+            }
+            if (selectedTiles.length === 2) {
+                moves++;
+                updateMoveCounter();
+                setTimeout(checkMatch, 650);
+            }
+        }
+
+        function createConfetti(x, y) {
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#1dd1a1', '#f368e0'];
+            for (let i = 0; i < 15; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = x + 'px';
+                confetti.style.top = y + 'px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.transform = `translate(${(Math.random() - 0.5) * 200}px, 0) rotate(${Math.random() * 360}deg)`;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 2000);
+            }
+        }
+
+        function checkMatch() {
+            if (selectedTiles[0].dataset.symbol === selectedTiles[1].dataset.symbol) {
+                // Match found!
+                selectedTiles[0].classList.add('matched');
+                selectedTiles[1].classList.add('matched');
+                
+                // Create confetti at tile positions
+                const rect1 = selectedTiles[0].getBoundingClientRect();
+                const rect2 = selectedTiles[1].getBoundingClientRect();
+                createConfetti(rect1.left + rect1.width / 2, rect1.top + rect1.height / 2);
+                createConfetti(rect2.left + rect2.width / 2, rect2.top + rect2.height / 2);
+                
+                setTimeout(() => {
+                    selectedTiles[0].style.visibility = 'hidden';
+                    selectedTiles[1].style.visibility = 'hidden';
+                    selectedTiles = [];
+                    checkWin();
+                }, 500);
+            } else {
+                selectedTiles[0].classList.remove('selected');
+                selectedTiles[1].classList.remove('selected');
+                selectedTiles[0].innerHTML = "👀";
+                selectedTiles[1].innerHTML = "👀";
+                selectedTiles = [];
+            }
+        }
+
+        function checkWin() {
+            if (document.querySelectorAll('.tile:not([style*="hidden"])').length === 0) {
+                if (!completedLevels.includes(level)) {
+                    completedLevels.push(level);
+                }
+                updateLevelIndicator();
+                
+                let levelName = level === 2 ? "Easy" : level === 4 ? "Medium" : "Hard";
+                document.getElementById('status').innerHTML = `🎉 ${levelName} Level Complete in ${moves} moves! 🎉`;
+                
+                if (level === 6) {
+                    document.getElementById('status').innerHTML = `🏆 Congratulations! You're an Emojitsu Master! 🏆<br>Total Moves: ${moves}`;
+                }
+                document.getElementById('nextLevelButton').style.visibility = "visible";
+            }
+        }
+
+        function nextLevel() {
+            if (level === 2) {
+                level = 4;
+            } else if (level === 4) {
+                level = 6;
+            } else {
+                // Game completed - restart
+                level = 2;
+                completedLevels = [];
+                moves = 0;
+            }
+            tiles = [];
+            selectedTiles = [];
+            document.getElementById('status').innerHTML = `Moves: <span id="moveCounter">${moves}</span>`;
+            createBoard();
+        }
+    </script>
+</body>
+</html>
