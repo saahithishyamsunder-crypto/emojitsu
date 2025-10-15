@@ -3,21 +3,43 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Emojitsu</title>
+    <title>NEURAL MATCH AI | Cognitive Training System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: 'Quicksand', Arial, sans-serif;
-            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 25%, #00ff88 50%, #9d00ff 75%, #00ccff 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            font-family: 'Rajdhani', 'Orbitron', monospace, sans-serif;
+            background: #0a0e27;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(0, 255, 157, 0.1) 0%, transparent 50%),
+                linear-gradient(180deg, #0a0e27 0%, #1a1f3a 50%, #0f1428 100%);
             overflow-x: hidden;
+            position: relative;
         }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.03) 0px, transparent 1px, transparent 2px, rgba(0, 255, 255, 0.03) 3px),
+                repeating-linear-gradient(90deg, rgba(0, 255, 255, 0.03) 0px, transparent 1px, transparent 2px, rgba(0, 255, 255, 0.03) 3px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 1;
+            animation: gridScroll 20s linear infinite;
+        }
+        @keyframes gridScroll {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
         }
         .emoji-bg {
             position: fixed;
@@ -27,54 +49,96 @@
             top: 0;
             left: 0;
             pointer-events: none;
-            display: none; /* Hidden during game */
+            display: none;
         }
         .emoji-bg.show {
-            display: block; /* Show only on home page */
+            display: block;
         }
         .emoji-bg span {
             position: absolute;
             font-size: 2.5rem;
-            opacity: 0.7;
+            opacity: 0.4;
             animation: floatUpContinuous 15s linear infinite;
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
+            filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.8)) drop-shadow(0 0 30px rgba(138, 43, 226, 0.6));
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
         }
         @keyframes floatUpContinuous {
             0% {
                 transform: translateY(0) scale(1) rotate(0deg);
-                opacity: 0.7;
+                opacity: 0.3;
+                filter: hue-rotate(0deg);
             }
             50% {
-                opacity: 0.9;
+                opacity: 0.6;
+                filter: hue-rotate(180deg);
             }
             100% {
                 transform: translateY(-120vh) scale(1.2) rotate(360deg);
-                opacity: 0.7;
+                opacity: 0.3;
+                filter: hue-rotate(360deg);
             }
         }
+        .scan-line {
+            position: fixed;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.8), transparent);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            animation: scan 4s linear infinite;
+            z-index: 2;
+            pointer-events: none;
+        }
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            50% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
         .main-title {
-            font-size: 4rem;
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5rem;
             font-weight: 900;
-            letter-spacing: 12px;
-            color: #fff;
-            background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
-            background-clip: text;
+            letter-spacing: 8px;
+            color: #00ffff;
+            text-align: center;
+            padding: 30px 50px;
+            margin-bottom: 20px;
+            position: relative;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #00ffff, #00ff9d, #8a2be2, #00ffff);
+            background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(255,255,255,0.5);
-            padding: 20px 40px;
-            border-radius: 20px;
-            margin-bottom: 40px;
-            text-align: center;
-            animation: titlePulse 2s ease-in-out infinite;
-            backdrop-filter: blur(10px);
-            background-color: rgba(0,0,0,0.3);
-            -webkit-text-fill-color: #ffbd39;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            background-clip: text;
+            animation: titleGlow 3s ease-in-out infinite, gradientFlow 4s ease infinite;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8)) drop-shadow(0 0 40px rgba(138, 43, 226, 0.6));
         }
-        @keyframes titlePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        .main-title::before {
+            content: 'NEURAL MATCH AI';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            color: rgba(0, 255, 255, 0.2);
+            animation: glitchText 5s infinite;
+        }
+        @keyframes titleGlow {
+            0%, 100% { 
+                filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8)) drop-shadow(0 0 40px rgba(138, 43, 226, 0.6));
+            }
+            50% { 
+                filter: drop-shadow(0 0 30px rgba(0, 255, 255, 1)) drop-shadow(0 0 60px rgba(138, 43, 226, 0.9));
+            }
+        }
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes glitchText {
+            0%, 90%, 100% { opacity: 0; }
+            91%, 93%, 95% { opacity: 1; transform: translate(-50%, -50%) skew(2deg); }
+            92%, 94% { opacity: 0; transform: translate(-50%, -50%) skew(-2deg); }
         }
         .home {
             display: flex;
@@ -86,30 +150,52 @@
             z-index: 1;
         }
         .subtitle {
-            font-size: 1.3rem;
-            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #00ff9d;
             text-align: center;
-            margin-bottom: 30px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            max-width: 500px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.8), 0 0 20px rgba(0, 255, 157, 0.4);
+            max-width: 600px;
             padding: 0 20px;
+            letter-spacing: 2px;
+            line-height: 1.8;
+        }
+        .tech-label {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            color: rgba(0, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            padding: 8px 20px;
+            border-radius: 20px;
+            background: rgba(0, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
         }
         #startBtn {
-            font-size: 1.8rem;
-            font-weight: bold;
-            padding: 18px 50px;
-            color: white;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border: none;
-            border-radius: 50px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.6rem;
+            font-weight: 700;
+            padding: 18px 60px;
+            color: #0a0e27;
+            background: linear-gradient(135deg, #00ffff, #00ff9d);
+            border: 2px solid #00ffff;
+            border-radius: 8px;
             margin-top: 22px;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(245,87,108,0.4);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.6),
+                0 0 40px rgba(0, 255, 255, 0.4),
+                inset 0 0 20px rgba(0, 255, 255, 0.2);
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(10px);
         }
         #startBtn::before {
             content: '';
@@ -118,18 +204,35 @@
             left: 50%;
             width: 0;
             height: 0;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.3);
+            background: rgba(138, 43, 226, 0.4);
             transform: translate(-50%, -50%);
             transition: width 0.6s, height 0.6s;
+            border-radius: 8px;
+        }
+        #startBtn::after {
+            content: '▶';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+            50% { opacity: 0.6; transform: translateY(-50%) scale(1.2); }
         }
         #startBtn:hover::before {
-            width: 300px;
-            height: 300px;
+            width: 400px;
+            height: 400px;
         }
         #startBtn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(245,87,108,0.6);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.9),
+                0 0 60px rgba(0, 255, 255, 0.6),
+                inset 0 0 30px rgba(0, 255, 255, 0.3);
+            border-color: #8a2be2;
         }
         #startBtn:active {
             transform: translateY(0);
@@ -144,75 +247,171 @@
         }
         .level-indicator {
             display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 20px;
+            margin-bottom: 25px;
             align-items: center;
+            position: relative;
+        }
+        .level-indicator::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+            top: 50%;
+            left: 0;
+            z-index: -1;
         }
         .level-dot {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: 'Orbitron', monospace;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             backdrop-filter: blur(10px);
-            background: rgba(255,255,255,0.2);
-            border: 3px solid rgba(255,255,255,0.5);
-            color: rgba(255,255,255,0.6);
-            transition: all 0.3s ease;
+            background: rgba(10, 14, 39, 0.8);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            color: rgba(0, 255, 255, 0.4);
+            transition: all 0.4s ease;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.1);
+        }
+        .level-dot::before {
+            content: 'LVL';
+            position: absolute;
+            top: -18px;
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            color: rgba(0, 255, 255, 0.5);
         }
         .level-dot.active {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            border-color: #fff;
-            color: #fff;
-            transform: scale(1.2);
-            box-shadow: 0 5px 20px rgba(245,87,108,0.6);
-            filter: blur(0);
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(138, 43, 226, 0.3));
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            transform: scale(1.15);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.8),
+                0 0 40px rgba(0, 255, 255, 0.4),
+                inset 0 0 20px rgba(0, 255, 255, 0.3);
+            animation: levelPulse 2s ease-in-out infinite;
+        }
+        @keyframes levelPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.4), inset 0 0 20px rgba(0, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(0, 255, 255, 1), 0 0 60px rgba(0, 255, 255, 0.6), inset 0 0 30px rgba(0, 255, 255, 0.5); }
         }
         .level-dot.completed {
-            background: linear-gradient(135deg, #56ab2f, #a8e063);
-            border-color: #56ab2f;
-            color: #fff;
-            filter: blur(0);
+            background: linear-gradient(135deg, rgba(0, 255, 157, 0.3), rgba(0, 255, 255, 0.3));
+            border: 2px solid #00ff9d;
+            color: #00ff9d;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.6), inset 0 0 15px rgba(0, 255, 157, 0.2);
+        }
+        .level-dot.completed::after {
+            content: '✓';
+            position: absolute;
+            right: -5px;
+            top: -5px;
+            font-size: 1rem;
+            color: #00ff9d;
+            background: #0a0e27;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .level-dot:not(.active):not(.completed) {
-            filter: blur(2px);
+            opacity: 0.5;
         }
         #gameBoard {
             display: grid;
-            gap: 10px;
-            background: rgba(30, 42, 58, 0.85);
-            backdrop-filter: blur(15px);
-            padding: 24px;
-            border-radius: 16px;
+            gap: 12px;
+            background: rgba(10, 14, 39, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 28px;
+            border-radius: 12px;
             margin-top: 18px;
             margin-bottom: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            box-shadow: 
+                0 0 40px rgba(0, 255, 255, 0.2),
+                0 0 80px rgba(138, 43, 226, 0.15),
+                inset 0 0 40px rgba(0, 255, 255, 0.05);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            position: relative;
+        }
+        #gameBoard::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ffff, #8a2be2, #00ff9d, #00ffff);
+            background-size: 300% 300%;
+            border-radius: 12px;
+            z-index: -1;
+            animation: borderGlow 3s ease infinite;
+            opacity: 0.5;
+        }
+        @keyframes borderGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         .tile {
-            background: linear-gradient(135deg, #ffffff, #f0f0f0);
-            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(26, 31, 58, 0.9), rgba(15, 20, 40, 0.9));
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2rem;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.5),
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
             transition: all 0.3s ease;
             min-width: 60px;
             min-height: 75px;
-            border: 2px solid rgba(255,255,255,0.3);
+            border: 2px solid rgba(0, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        .tile:hover::before {
+            left: 100%;
         }
         .tile:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            transform: translateY(-3px);
+            box-shadow: 
+                0 6px 20px rgba(0, 255, 255, 0.4),
+                inset 0 0 30px rgba(0, 255, 255, 0.2);
+            border-color: #00ffff;
         }
         .tile.selected {
-            background: linear-gradient(135deg, #aaf0fb, #48dbfb);
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 8px 20px rgba(72,219,251,0.5);
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(138, 43, 226, 0.3));
+            transform: scale(1.08) rotateY(10deg);
+            box-shadow: 
+                0 8px 30px rgba(0, 255, 255, 0.6),
+                0 0 40px rgba(138, 43, 226, 0.4),
+                inset 0 0 30px rgba(0, 255, 255, 0.3);
+            border-color: #00ffff;
+            animation: selectedPulse 0.6s ease-in-out;
+        }
+        @keyframes selectedPulse {
+            0%, 100% { transform: scale(1.08) rotateY(10deg); }
+            50% { transform: scale(1.12) rotateY(15deg); }
         }
         .stats-container {
             display: flex;
@@ -223,73 +422,114 @@
             justify-content: center;
         }
         #status, #timer {
-            font-size: 1.5rem;
-            font-weight: bold;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
-            color: #00ffe0;
-            padding: 12px 24px;
-            border-radius: 12px;
-            min-height: 40px;
+            font-family: 'Rajdhani', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: rgba(10, 14, 39, 0.9);
+            backdrop-filter: blur(15px);
+            color: #00ffff;
+            padding: 14px 28px;
+            border-radius: 8px;
+            min-height: 45px;
             text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.3),
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
         #timer {
-            color: #ffdd00;
+            color: #00ff9d;
+            border-color: rgba(0, 255, 157, 0.3);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 157, 0.3),
+                inset 0 0 20px rgba(0, 255, 157, 0.1);
         }
         #timer.warning {
-            color: #ff4444;
+            color: #ff0066;
+            border-color: rgba(255, 0, 102, 0.6);
             animation: timerPulse 0.5s ease-in-out infinite;
+            box-shadow: 
+                0 0 30px rgba(255, 0, 102, 0.6),
+                inset 0 0 30px rgba(255, 0, 102, 0.2);
         }
         @keyframes timerPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(255, 0, 102, 0.6), inset 0 0 30px rgba(255, 0, 102, 0.2);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 40px rgba(255, 0, 102, 0.9), inset 0 0 40px rgba(255, 0, 102, 0.3);
+            }
         }
         #nextLevelButton, #restartLevelButton {
-            font-size: 1.4rem;
-            font-weight: bold;
-            margin-top: 14px;
-            padding: 12px 30px;
-            border: none;
-            background: linear-gradient(135deg, #ff6347, #ff9068);
-            color: white;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-top: 18px;
+            padding: 14px 35px;
+            border: 2px solid #00ff9d;
+            background: linear-gradient(135deg, rgba(0, 255, 157, 0.2), rgba(0, 255, 255, 0.2));
+            color: #00ff9d;
             cursor: pointer;
-            border-radius: 50px;
+            border-radius: 8px;
             visibility: hidden;
-            box-shadow: 0 5px 20px rgba(255,99,71,0.4);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 157, 0.4),
+                inset 0 0 20px rgba(0, 255, 157, 0.1);
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 3px;
+            backdrop-filter: blur(10px);
         }
         #nextLevelButton:hover, #restartLevelButton:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255,99,71,0.6);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 157, 0.6),
+                0 0 50px rgba(0, 255, 157, 0.3),
+                inset 0 0 30px rgba(0, 255, 157, 0.2);
+            background: linear-gradient(135deg, rgba(0, 255, 157, 0.3), rgba(0, 255, 255, 0.3));
         }
         #restartLevelButton {
-            background: linear-gradient(135deg, #ffa500, #ff6347);
-            box-shadow: 0 5px 20px rgba(255,165,0,0.4);
+            border-color: #8a2be2;
+            color: #8a2be2;
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(0, 255, 255, 0.2));
+            box-shadow: 
+                0 0 20px rgba(138, 43, 226, 0.4),
+                inset 0 0 20px rgba(138, 43, 226, 0.1);
             visibility: hidden;
             margin-top: 14px;
         }
         #restartLevelButton:hover {
-            box-shadow: 0 8px 25px rgba(255,165,0,0.6);
+            box-shadow: 
+                0 0 30px rgba(138, 43, 226, 0.6),
+                0 0 50px rgba(138, 43, 226, 0.3),
+                inset 0 0 30px rgba(138, 43, 226, 0.2);
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(0, 255, 255, 0.3));
         }
         #backBtn, #pauseBtn {
             position: fixed;
             top: 20px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            padding: 10px 20px;
-            border: none;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
-            color: white;
+            font-family: 'Rajdhani', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 12px 24px;
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            background: rgba(10, 14, 39, 0.85);
+            backdrop-filter: blur(15px);
+            color: #00ffff;
             cursor: pointer;
-            border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.3),
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
             transition: all 0.3s ease;
             z-index: 1000;
             display: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         #backBtn {
             left: 20px;
@@ -298,9 +538,13 @@
             right: 20px;
         }
         #backBtn:hover, #pauseBtn:hover {
-            background: rgba(0,0,0,0.8);
+            background: rgba(10, 14, 39, 0.95);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.6),
+                0 0 50px rgba(0, 255, 255, 0.3),
+                inset 0 0 30px rgba(0, 255, 255, 0.2);
+            border-color: #00ffff;
         }
         .pause-overlay {
             position: fixed;
@@ -308,57 +552,91 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(10px);
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(20px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 999;
             flex-direction: column;
-            gap: 30px;
+            gap: 40px;
         }
         .pause-overlay.show {
             display: flex;
         }
         .pause-message {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #00ffff;
+            text-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.8),
+                0 0 40px rgba(0, 255, 255, 0.6),
+                0 0 60px rgba(138, 43, 226, 0.4);
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            animation: pauseGlow 2s ease-in-out infinite;
+        }
+        @keyframes pauseGlow {
+            0%, 100% { 
+                text-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.6), 0 0 60px rgba(138, 43, 226, 0.4);
+            }
+            50% { 
+                text-shadow: 0 0 30px rgba(0, 255, 255, 1), 0 0 60px rgba(0, 255, 255, 0.8), 0 0 90px rgba(138, 43, 226, 0.6);
+            }
         }
         #resumeBtn {
-            font-size: 1.5rem;
-            font-weight: bold;
-            padding: 15px 40px;
-            border: none;
-            background: linear-gradient(135deg, #00d4ff, #0099ff);
-            color: white;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            padding: 16px 50px;
+            border: 2px solid #00ffff;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 255, 157, 0.2));
+            color: #00ffff;
             cursor: pointer;
-            border-radius: 50px;
-            box-shadow: 0 10px 30px rgba(0,153,255,0.4);
+            border-radius: 8px;
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.5),
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
+            backdrop-filter: blur(10px);
         }
         #resumeBtn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0,153,255,0.6);
+            box-shadow: 
+                0 0 40px rgba(0, 255, 255, 0.8),
+                0 0 70px rgba(0, 255, 255, 0.5),
+                inset 0 0 30px rgba(0, 255, 255, 0.2);
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(0, 255, 157, 0.3));
         }
         .tile.matched {
-            animation: matchPulse 0.5s ease;
+            animation: matchPulse 0.6s ease, matchGlow 0.6s ease;
         }
         @keyframes matchPulse {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.3) rotate(10deg); }
+            50% { 
+                transform: scale(1.25) rotate(10deg);
+                box-shadow: 
+                    0 0 40px rgba(0, 255, 157, 0.9),
+                    0 0 80px rgba(0, 255, 157, 0.6);
+            }
+        }
+        @keyframes matchGlow {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(2) hue-rotate(90deg); }
+            100% { filter: brightness(1); }
         }
         .confetti {
             position: fixed;
-            width: 10px;
-            height: 10px;
-            background: #f0f;
+            width: 12px;
+            height: 12px;
+            background: #00ffff;
             pointer-events: none;
             z-index: 1000;
             animation: confettiFall 2s linear forwards;
+            box-shadow: 0 0 10px currentColor;
         }
         @keyframes confettiFall {
             to {
@@ -396,17 +674,19 @@
     </style>
 </head>
 <body>
-    <button id="backBtn">← Back to Home</button>
-    <button id="pauseBtn">⏸️ Pause</button>
+    <div class="scan-line"></div>
+    <button id="backBtn">◄ EXIT</button>
+    <button id="pauseBtn">|| PAUSE</button>
     <div class="pause-overlay" id="pauseOverlay">
-        <div class="pause-message">⏸️ PAUSED</div>
-        <button id="resumeBtn">▶️ Resume Game</button>
+        <div class="pause-message">|| SYSTEM PAUSED</div>
+        <button id="resumeBtn">▶ RESUME</button>
     </div>
     <div class="emoji-bg show" id="emojiBg"></div>
     <div class="home" id="homePage">
-        <div class="main-title">🎮 EMOJITSU 🎮</div>
-        <div class="subtitle">Test your memory and reflexes! Match pairs, beat the clock, and become the ultimate champion! 🏆⚡</div>
-        <button id="startBtn">Start Game</button>
+        <div class="main-title">NEURAL MATCH AI</div>
+        <div class="tech-label">⚡ Cognitive Training System v2.0</div>
+        <div class="subtitle">Advanced pattern recognition • Neural pathway optimization • Real-time cognitive assessment</div>
+        <button id="startBtn">INITIALIZE</button>
     </div>
     <div id="gameContainer" style="display:none;">
         <div class="level-indicator" id="levelIndicator">
@@ -415,22 +695,22 @@
             <div class="level-dot" data-level="6">3</div>
         </div>
         <div class="stats-container">
-            <div id="timer">⏱️ Time: <span id="timeCounter">0</span>s</div>
-            <div id="status">Moves: <span id="moveCounter">0</span></div>
+            <div id="timer">⏱ ELAPSED: <span id="timeCounter">0</span>s</div>
+            <div id="status">ACTIONS: <span id="moveCounter">0</span></div>
         </div>
         <div id="gameBoard"></div>
-        <button id="restartLevelButton" onclick="restartCurrentLevel()">🔄 Restart Level</button>
-        <button id="nextLevelButton" onclick="nextLevel()">Next Level</button>
+        <button id="restartLevelButton" onclick="restartCurrentLevel()">↻ RESET SYSTEM</button>
+        <button id="nextLevelButton" onclick="nextLevel()">NEXT LEVEL →</button>
     </div>
 
     <script>
-        // Emoji sets for each level
-        const faceEmojis = ['😀', '😎', '😂', '😍', '🤓', '😡', '😱', '😴'];
-        const foodEmojis = ['🍎', '🍔', '🍩', '🍕', '🌮', '🍣', '🍦', '🍉'];
-        const animalEmojis = ['🐶', '🦁', '🐵', '🐧', '🐸', '🐝', '🐢', '🦉', '🐳','🐕','🐈','🐂','🐄','🐩','🐎','🦓','🦒','🦘'];
+        // Tech-themed emoji sets for each level
+        const techEmojis = ['💻', '🖥️', '⌨️', '🖱️', '🔌', '💾', '📱', '⚡'];
+        const aiEmojis = ['🤖', '🧠', '👾', '🛸', '🔮', '⚙️', '🎯', '💡'];
+        const dataEmojis = ['📊', '📈', '🔬', '🧬', '🔭', '🌐', '💎', '🔑', '🎮','⚛️','🔋','📡','🛰️','💿','🎛️','🔊','📟','🖲️'];
 
-        // Background emojis (mix for visual effect)
-        const bgEmojis = ['🍉', '🎠', '🐼', '🤣', '🌹', '🌈', '😘', '🚗', '🌏', '🍀', '🐳', '👍', '🦋', '😈', '🥶', '👩🏻‍🚀', '🎂', '🐞'];
+        // Background tech emojis
+        const bgEmojis = ['💻', '🤖', '⚡', '🧠', '🔮', '⚙️', '💾', '🛸', '🌐', '💡', '🔬', '📡', '🎯', '👾', '⚛️', '🔋', '💎', '🎮'];
         const emojiBg = document.getElementById('emojiBg');
         function generateEmojis() {
             for(let i=0;i<32;i++) {
@@ -541,8 +821,8 @@
             console.log('Time out! Showing restart button...');
             
             // Show time out message
-            document.getElementById('status').innerHTML = '⏰ Time\'s Up! Click restart to try again';
-            document.getElementById('timer').innerHTML = '⏱️ Time: 60s ❌';
+            document.getElementById('status').innerHTML = '⚠ TIMEOUT | SYSTEM RESET REQUIRED';
+            document.getElementById('timer').innerHTML = '⏱ ELAPSED: 60s ✖';
             document.getElementById('timer').classList.remove('warning');
             
             // Show restart button
@@ -577,8 +857,8 @@
             // Reset displays to fresh state
             updateMoveCounter();
             updateLevelIndicator();
-            document.getElementById('status').innerHTML = `Moves: <span id="moveCounter">0</span>`;
-            document.getElementById('timer').innerHTML = `⏱️ Time: <span id="timeCounter">0</span>s`;
+            document.getElementById('status').innerHTML = `ACTIONS: <span id="moveCounter">0</span>`;
+            document.getElementById('timer').innerHTML = `⏱ ELAPSED: <span id="timeCounter">0</span>s`;
             document.getElementById('timer').classList.remove('warning');
             
             // Clear and recreate board
@@ -672,13 +952,13 @@
             let gridSize, numPairs, emojis;
             if (level === 2) {
                 gridSize = 2; numPairs = 2;
-                emojis = faceEmojis;
+                emojis = techEmojis;
             } else if (level === 4) {
                 gridSize = 4; numPairs = 8;
-                emojis = foodEmojis;
+                emojis = aiEmojis;
             } else {
                 gridSize = 6; numPairs = 18;
-                emojis = animalEmojis;
+                emojis = dataEmojis;
             }
             gameBoard.style.gridTemplateColumns = `repeat(${gridSize}, minmax(35px, 80px))`;
             gameBoard.style.gridTemplateRows = `repeat(${gridSize}, minmax(45px, 100px))`;
@@ -694,7 +974,7 @@
                 let tile = document.createElement('div');
                 tile.classList.add('tile');
                 tile.dataset.symbol = tilePairs[i];
-                tile.innerHTML = "👀";
+                tile.innerHTML = "🔒";
                 tile.addEventListener('click', () => selectTile(tile));
                 gameBoard.appendChild(tile);
                 tiles.push(tile);
@@ -706,7 +986,7 @@
             // Don't allow tile selection if timer is stopped (during timeout)
             if (!timerInterval) return;
             
-            if (selectedTiles.length < 2 && !tile.classList.contains('selected') && tile.innerHTML === "👀") {
+            if (selectedTiles.length < 2 && !tile.classList.contains('selected') && tile.innerHTML === "🔒") {
                 tile.classList.add('selected');
                 tile.innerHTML = tile.dataset.symbol;
                 selectedTiles.push(tile);
@@ -719,14 +999,15 @@
         }
 
         function createConfetti(x, y) {
-            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#1dd1a1', '#f368e0'];
-            for (let i = 0; i < 15; i++) {
+            const colors = ['#00ffff', '#00ff9d', '#8a2be2', '#00d4ff', '#ff0066', '#ffdd00'];
+            for (let i = 0; i < 20; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 confetti.style.left = x + 'px';
                 confetti.style.top = y + 'px';
                 confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.transform = `translate(${(Math.random() - 0.5) * 200}px, 0) rotate(${Math.random() * 360}deg)`;
+                confetti.style.boxShadow = `0 0 15px ${colors[Math.floor(Math.random() * colors.length)]}`;
+                confetti.style.transform = `translate(${(Math.random() - 0.5) * 250}px, 0) rotate(${Math.random() * 360}deg)`;
                 document.body.appendChild(confetti);
                 setTimeout(() => confetti.remove(), 2000);
             }
@@ -753,14 +1034,14 @@
             } else {
                 selectedTiles[0].classList.remove('selected');
                 selectedTiles[1].classList.remove('selected');
-                selectedTiles[0].innerHTML = "👀";
-                selectedTiles[1].innerHTML = "👀";
+                selectedTiles[0].innerHTML = "🔒";
+                selectedTiles[1].innerHTML = "🔒";
                 selectedTiles = [];
             }
         }
 
         function createFirecrackerEffect() {
-            const celebrationEmojis = ['🎉', '🎊', '✨', '🌟', '💥', '🎆', '🎇', '⭐', '💫', '🔥'];
+            const celebrationEmojis = ['⚡', '💥', '✨', '🌟', '💫', '⭐', '💎', '🔮', '⚛️', '💠'];
             // Create multiple bursts from different positions
             for (let burst = 0; burst < 5; burst++) {
                 setTimeout(() => {
@@ -805,15 +1086,15 @@
                 }
                 updateLevelIndicator();
                 
-                let levelName = level === 2 ? "Easy" : level === 4 ? "Medium" : "Hard";
-                document.getElementById('status').innerHTML = `🎉 ${levelName} Complete! ${moves} moves 🎉`;
-                document.getElementById('timer').innerHTML = `⏱️ Time: ${timeElapsed}s`;
+                let levelName = level === 2 ? "BASIC" : level === 4 ? "ADVANCED" : "EXPERT";
+                document.getElementById('status').innerHTML = `✓ ${levelName} PROTOCOL COMPLETE | ${moves} ACTIONS`;
+                document.getElementById('timer').innerHTML = `⏱ ELAPSED: ${timeElapsed}s`;
                 
                 if (level === 6) {
                     let totalTime = levelTimes.reduce((sum, lt) => sum + lt.time, 0);
                     let totalMoves = levelTimes.reduce((sum, lt) => sum + lt.moves, 0);
-                    document.getElementById('status').innerHTML = `🏆 Emojitsu Master! 🏆<br>Total: ${totalMoves} moves`;
-                    document.getElementById('timer').innerHTML = `⏱️ Total Time: ${totalTime}s`;
+                    document.getElementById('status').innerHTML = `⚡ NEURAL MASTERY ACHIEVED<br>TOTAL: ${totalMoves} ACTIONS`;
+                    document.getElementById('timer').innerHTML = `⏱ TOTAL TIME: ${totalTime}s`;
                 }
                 document.getElementById('nextLevelButton').style.visibility = "visible";
             }
@@ -834,8 +1115,8 @@
             }
             tiles = [];
             selectedTiles = [];
-            document.getElementById('status').innerHTML = `Moves: <span id="moveCounter">${moves}</span>`;
-            document.getElementById('timer').innerHTML = `⏱️ Time: <span id="timeCounter">0</span>s`;
+            document.getElementById('status').innerHTML = `ACTIONS: <span id="moveCounter">${moves}</span>`;
+            document.getElementById('timer').innerHTML = `⏱ ELAPSED: <span id="timeCounter">0</span>s`;
             document.getElementById('timer').classList.remove('warning');
             createBoard();
             startTimer();
