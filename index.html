@@ -1122,8 +1122,44 @@
             startTimer();
         }
     </script>
+   <script>
+let level = 1; // track current level
+let gameTimer;
+let timeLeft = 60;
+
+function startGame() {
+    document.getElementById('restartLevelButton').style.visibility = 'hidden';
+    timeLeft = 60;
+    levelSetup(level);
+    startTimer();
+}
+
+function startTimer() {
+    clearInterval(gameTimer);
+    gameTimer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').textContent = 'TIME: ' + timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(gameTimer);
+            // show the restart button after 60 seconds
+            document.getElementById('restartLevelButton').style.visibility = 'visible';
+        }
+    }, 1000);
+}
+
+function levelSetup(lv) {
+    // logic for setting up the level again (regenerate tiles, reset matches, etc.)
+    console.log('Level setup for level ' + lv);
+}
+
+document.getElementById('restartLevelButton').addEventListener('click', () => {
+    clearInterval(gameTimer);
+    startGame(); // restart current level from scratch
+});
+</script> 
 </body>
 </html>
+
 
 
 
