@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NEURAL MATCH | Cognitive Training System</title>
+    <title>NEURAL MATCH AI | Cognitive Training System</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -776,6 +776,28 @@
             }, 1000);
         }
 
+        function resumeTimer() {
+            // Resume timer from current timeElapsed value without resetting
+            updateTimerDisplay();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeElapsed++;
+                updateTimerDisplay();
+                
+                // Add warning effect when time is running out
+                const timerElement = document.getElementById('timer');
+                if (timeElapsed >= 50 && timeElapsed < 60) {
+                    timerElement.classList.add('warning');
+                } else if (timeElapsed >= 60) {
+                    // Time's up! Restart the level
+                    stopTimer();
+                    timeOutRestart();
+                } else {
+                    timerElement.classList.remove('warning');
+                }
+            }, 1000);
+        }
+
         function stopTimer() {
             if (timerInterval) {
                 clearInterval(timerInterval);
@@ -836,23 +858,31 @@
         }
         
         function restartCurrentLevel() {
+            console.log('restartCurrentLevel called for level:', level);
             // Stop any running timer first
             if (timerInterval) {
                 clearInterval(timerInterval);
                 timerInterval = null;
             }
             
-            // Hide restart button
+            // Hide restart button and pause overlay
             document.getElementById('restartLevelButton').style.visibility = 'hidden';
+            document.getElementById('pauseOverlay').classList.remove('show');
             
-            // Reset ALL game state - restart from level 1
-            level = 2; // Start from level 1 (2x2 grid)
+            // Reset ONLY current level state - keep level and completed levels
+            // DO NOT reset: level, completedLevels, levelTimes
+            console.log('Restarting current level:', level);
+            
+            // Clear the game board completely
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = ''; // Remove all existing tiles from DOM
+            
+            // Reset game state variables
             moves = 0;
             selectedTiles = [];
             tiles = [];
             timeElapsed = 0;
-            completedLevels = [];
-            levelTimes = [];
+            isPaused = false;
             
             // Reset displays to fresh state
             updateMoveCounter();
@@ -861,9 +891,13 @@
             document.getElementById('timer').innerHTML = `⏱ ELAPSED: <span id="timeCounter">0</span>s`;
             document.getElementById('timer').classList.remove('warning');
             
-            // Clear and recreate board
+            // Create a completely fresh board with new shuffled tiles
+            console.log('About to call createBoard()');
             createBoard();
+            console.log('createBoard() completed, tiles array length:', tiles.length);
+            console.log('About to call startTimer()');
             startTimer();
+            console.log('startTimer() completed, timerInterval:', timerInterval);
         }
 
         document.getElementById('startBtn').onclick = function() {
@@ -889,6 +923,8 @@
         document.getElementById('pauseBtn').onclick = function() {
             if (!isPaused) {
                 pauseGame();
+            } else {
+                resumeGame();
             }
         };
 
@@ -909,9 +945,9 @@
 
         function resumeGame() {
             isPaused = false;
-            startTimer();
+            resumeTimer();
             document.getElementById('pauseOverlay').classList.remove('show');
-            document.getElementById('pauseBtn').innerText = '⏸️ Pause';
+            document.getElementById('pauseBtn').innerText = '|| PAUSE';
             // Enable tile clicks
             tiles.forEach(tile => {
                 if (tile.style.visibility !== 'hidden') {
@@ -945,6 +981,7 @@
         };
 
         function createBoard() {
+            console.log('createBoard called for level:', level);
             document.getElementById('nextLevelButton').style.visibility = "hidden";
             document.getElementById('restartLevelButton').style.visibility = "hidden";
             const gameBoard = document.getElementById('gameBoard');
@@ -960,12 +997,14 @@
                 gridSize = 6; numPairs = 18;
                 emojis = dataEmojis;
             }
+            console.log('Grid size:', gridSize, 'Pairs:', numPairs);
             gameBoard.style.gridTemplateColumns = `repeat(${gridSize}, minmax(35px, 80px))`;
             gameBoard.style.gridTemplateRows = `repeat(${gridSize}, minmax(45px, 100px))`;
 
             // Prepare paired and shuffled tiles
             let tilePairs = emojis.slice(0, numPairs).concat(emojis.slice(0, numPairs));
             tilePairs.sort(() => Math.random() - 0.5);
+            console.log('Tile pairs prepared:', tilePairs.length);
 
             tiles = [];
             selectedTiles = [];
@@ -975,21 +1014,37 @@
                 tile.classList.add('tile');
                 tile.dataset.symbol = tilePairs[i];
                 tile.innerHTML = "🔒";
-                tile.addEventListener('click', () => selectTile(tile));
+                // Explicitly ensure tiles are enabled and visible
+                tile.style.pointerEvents = 'auto';
+                tile.style.opacity = '1';
+                tile.style.visibility = 'visible';
+                tile.addEventListener('click', () => {
+                    console.log('Tile click event fired for tile', i);
+                    selectTile(tile);
+                });
                 gameBoard.appendChild(tile);
                 tiles.push(tile);
+                console.log('Created tile', i, 'with symbol:', tilePairs[i]);
             }
+            console.log('Created', tiles.length, 'tiles');
+            console.log('GameBoard children:', gameBoard.children.length);
             updateLevelIndicator();
         }
 
         function selectTile(tile) {
+            console.log('selectTile called, timerInterval:', timerInterval);
             // Don't allow tile selection if timer is stopped (during timeout)
-            if (!timerInterval) return;
+            if (!timerInterval) {
+                console.log('Timer not running, blocking tile selection');
+                return;
+            }
             
+            console.log('Tile clicked:', tile.innerHTML, 'symbol:', tile.dataset.symbol);
             if (selectedTiles.length < 2 && !tile.classList.contains('selected') && tile.innerHTML === "🔒") {
                 tile.classList.add('selected');
                 tile.innerHTML = tile.dataset.symbol;
                 selectedTiles.push(tile);
+                console.log('Tile selected, selectedTiles length:', selectedTiles.length);
             }
             if (selectedTiles.length === 2) {
                 moves++;
@@ -1124,5 +1179,3 @@
     </script>
 </body>
 </html>
-
-
