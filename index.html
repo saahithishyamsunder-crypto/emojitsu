@@ -222,21 +222,127 @@
             0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
             50% { opacity: 0.6; transform: translateY(-50%) scale(1.2); }
         }
-        #startBtn:hover::before {
+        #startBtn:hover::before,
+        #startBtn:focus::before {
             width: 400px;
             height: 400px;
         }
-        #startBtn:hover {
+        #startBtn:hover,
+        #startBtn:focus {
             transform: translateY(-3px);
             box-shadow: 
                 0 0 30px rgba(0, 255, 255, 0.9),
                 0 0 60px rgba(0, 255, 255, 0.6),
                 inset 0 0 30px rgba(0, 255, 255, 0.3);
             border-color: #8a2be2;
+            outline: none;
         }
         #startBtn:active {
             transform: translateY(0);
         }
+        
+        /* Instructions Screen */
+        #instructionsScreen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+        }
+        #instructionsScreen.show {
+            display: flex;
+        }
+        .instructions-container {
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 40px 50px;
+            max-width: 700px;
+            box-shadow: 
+                0 0 40px rgba(0, 255, 255, 0.3),
+                inset 0 0 40px rgba(0, 255, 255, 0.05);
+        }
+        .instructions-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #00ffff;
+            text-align: center;
+            margin-bottom: 30px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+        .control-section {
+            margin-bottom: 25px;
+        }
+        .control-section h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: #00ff9d;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.6);
+        }
+        .control-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+        }
+        .key-display {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 45px;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(138, 43, 226, 0.2));
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            border-radius: 6px;
+            color: #00ffff;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            margin-right: 15px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+        .control-description {
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: 1px;
+        }
+        #beginGameBtn {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 16px 50px;
+            color: #0a0e27;
+            background: linear-gradient(135deg, #00ffff, #00ff9d);
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            margin-top: 30px;
+            cursor: pointer;
+            box-shadow: 
+                0 0 25px rgba(0, 255, 255, 0.6),
+                inset 0 0 20px rgba(0, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            width: 100%;
+        }
+        #beginGameBtn:hover,
+        #beginGameBtn:focus {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 0 35px rgba(0, 255, 255, 0.9),
+                inset 0 0 30px rgba(0, 255, 255, 0.3);
+            border-color: #8a2be2;
+            outline: none;
+        }
+        
         #gameContainer {
             display: flex;
             flex-direction: column;
@@ -389,15 +495,25 @@
             background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
             transition: left 0.5s;
         }
-        .tile:hover::before {
+        .tile:hover::before,
+        .tile.keyboard-focus::before {
             left: 100%;
         }
-        .tile:hover {
+        .tile:hover,
+        .tile.keyboard-focus {
             transform: translateY(-3px);
             box-shadow: 
                 0 6px 20px rgba(0, 255, 255, 0.4),
                 inset 0 0 30px rgba(0, 255, 255, 0.2);
             border-color: #00ffff;
+        }
+        .tile.keyboard-focus {
+            outline: 3px solid #00ffff;
+            outline-offset: 2px;
+            box-shadow: 
+                0 6px 25px rgba(0, 255, 255, 0.6),
+                0 0 30px rgba(0, 255, 255, 0.4),
+                inset 0 0 30px rgba(0, 255, 255, 0.3);
         }
         .tile.selected {
             background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(138, 43, 226, 0.3));
@@ -484,13 +600,15 @@
             letter-spacing: 3px;
             backdrop-filter: blur(10px);
         }
-        #nextLevelButton:hover, #restartLevelButton:hover {
+        #nextLevelButton:hover, #restartLevelButton:hover,
+        #nextLevelButton:focus, #restartLevelButton:focus {
             transform: translateY(-2px);
             box-shadow: 
                 0 0 30px rgba(0, 255, 157, 0.6),
                 0 0 50px rgba(0, 255, 157, 0.3),
                 inset 0 0 30px rgba(0, 255, 157, 0.2);
             background: linear-gradient(135deg, rgba(0, 255, 157, 0.3), rgba(0, 255, 255, 0.3));
+            outline: none;
         }
         #restartLevelButton {
             border-color: #8a2be2;
@@ -502,12 +620,14 @@
             visibility: hidden;
             margin-top: 14px;
         }
-        #restartLevelButton:hover {
+        #restartLevelButton:hover,
+        #restartLevelButton:focus {
             box-shadow: 
                 0 0 30px rgba(138, 43, 226, 0.6),
                 0 0 50px rgba(138, 43, 226, 0.3),
                 inset 0 0 30px rgba(138, 43, 226, 0.2);
             background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(0, 255, 255, 0.3));
+            outline: none;
         }
         #backBtn, #pauseBtn {
             position: fixed;
@@ -537,7 +657,8 @@
         #pauseBtn {
             right: 20px;
         }
-        #backBtn:hover, #pauseBtn:hover {
+        #backBtn:hover, #pauseBtn:hover,
+        #backBtn:focus, #pauseBtn:focus {
             background: rgba(10, 14, 39, 0.95);
             transform: translateY(-2px);
             box-shadow: 
@@ -545,6 +666,7 @@
                 0 0 50px rgba(0, 255, 255, 0.3),
                 inset 0 0 30px rgba(0, 255, 255, 0.2);
             border-color: #00ffff;
+            outline: none;
         }
         .pause-overlay {
             position: fixed;
@@ -603,13 +725,15 @@
             letter-spacing: 4px;
             backdrop-filter: blur(10px);
         }
-        #resumeBtn:hover {
+        #resumeBtn:hover,
+        #resumeBtn:focus {
             transform: translateY(-3px);
             box-shadow: 
                 0 0 40px rgba(0, 255, 255, 0.8),
                 0 0 70px rgba(0, 255, 255, 0.5),
                 inset 0 0 30px rgba(0, 255, 255, 0.2);
             background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(0, 255, 157, 0.3));
+            outline: none;
         }
         .tile.matched {
             animation: matchPulse 0.6s ease, matchGlow 0.6s ease;
@@ -630,354 +754,331 @@
         }
         .confetti {
             position: fixed;
-            width: 12px;
-            height: 12px;
-            background: #00ffff;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: confettiFall 2s ease-out forwards;
             pointer-events: none;
-            z-index: 1000;
-            animation: confettiFall 2s linear forwards;
-            box-shadow: 0 0 10px currentColor;
+            z-index: 9999;
         }
         @keyframes confettiFall {
-            to {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
                 transform: translateY(100vh) rotate(720deg);
                 opacity: 0;
             }
         }
-        @media (max-width: 700px) {
+        @media (max-width: 768px) {
             .main-title {
-                font-size: 2rem;
-                padding: 6px 12px;
-                letter-spacing: 4px;
+                font-size: 2.2rem;
+                padding: 20px 30px;
             }
             .subtitle {
-                font-size: 1rem;
+                font-size: 1.1rem;
             }
             #startBtn {
                 font-size: 1.3rem;
-                padding: 12px 30px;
-            }
-            #gameBoard {
-                padding: 8px;
+                padding: 14px 40px;
             }
             .tile {
-                min-width: 38px;
-                min-height: 48px;
-                font-size: 1.3rem;
+                font-size: 1.5rem;
+                min-width: 50px;
+                min-height: 60px;
             }
-            .level-dot {
-                width: 40px;
-                height: 40px;
-                font-size: 0.9rem;
+            .instructions-title {
+                font-size: 1.6rem;
             }
+            .control-item {
+                font-size: 0.95rem;
+            }
+        }
+        .keyboard-help {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            color: rgba(0, 255, 255, 0.6);
+            text-align: center;
+            margin-top: 10px;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
     <div class="scan-line"></div>
-    <button id="backBtn">◄ EXIT</button>
-    <button id="pauseBtn">|| PAUSE</button>
-    <div class="pause-overlay" id="pauseOverlay">
-        <div class="pause-message">|| SYSTEM PAUSED</div>
-        <button id="resumeBtn">▶ RESUME</button>
-    </div>
-    <div class="emoji-bg show" id="emojiBg"></div>
-    <div class="home" id="homePage">
+    <div class="emoji-bg" id="emojiBg"></div>
+
+    <div id="home" class="home">
         <div class="main-title">NEURAL MATCH AI</div>
-        <div class="tech-label">⚡ Cognitive Training System v2.0</div>
-        <div class="subtitle">Advanced pattern recognition • Neural pathway optimization • Real-time cognitive assessment</div>
-        <button id="startBtn">INITIALIZE</button>
+        <div class="subtitle">Enhance Your Cognitive Processing Through Neural Pattern Recognition</div>
+        <div class="tech-label">⚡ Keyboard-Optimized System ⚡</div>
+        <button id="startBtn" tabindex="0">Initialize Training</button>
     </div>
-    <div id="gameContainer" style="display:none;">
-        <div class="level-indicator" id="levelIndicator">
-            <div class="level-dot" data-level="2">1</div>
-            <div class="level-dot" data-level="4">2</div>
-            <div class="level-dot" data-level="6">3</div>
+
+    <!-- Instructions Screen -->
+    <div id="instructionsScreen">
+        <div class="instructions-container">
+            <div class="instructions-title">🎮 CONTROL SYSTEMS 🎮</div>
+            
+            <div class="control-section">
+                <h3>Navigation Controls</h3>
+                <div class="control-item">
+                    <span class="key-display">↑ ↓ ← →</span>
+                    <span class="control-description">Navigate between tiles</span>
+                </div>
+                <div class="control-item">
+                    <span class="key-display">W A S D</span>
+                    <span class="control-description">Alternative navigation (Up/Left/Down/Right)</span>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>Action Controls</h3>
+                <div class="control-item">
+                    <span class="key-display">SPACE</span>
+                    <span class="control-description">Select/Flip the focused tile</span>
+                </div>
+                <div class="control-item">
+                    <span class="key-display">ENTER</span>
+                    <span class="control-description">Select/Flip the focused tile</span>
+                </div>
+                <div class="control-item">
+                    <span class="key-display">ESC</span>
+                    <span class="control-description">Pause/Resume game</span>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>Quick Navigation</h3>
+                <div class="control-item">
+                    <span class="key-display">TAB</span>
+                    <span class="control-description">Navigate to buttons and controls</span>
+                </div>
+            </div>
+
+            <button id="beginGameBtn" tabindex="0">BEGIN TRAINING ▶</button>
         </div>
+    </div>
+
+    <div id="gameContainer" style="display: none;">
+        <button id="backBtn" tabindex="0">◀ BACK</button>
+        <button id="pauseBtn" tabindex="0">⏸ PAUSE</button>
+        
+        <div class="level-indicator" id="levelIndicator"></div>
         <div class="stats-container">
-            <div id="timer">⏱ ELAPSED: <span id="timeCounter">0</span>s</div>
             <div id="status">ACTIONS: <span id="moveCounter">0</span></div>
+            <div id="timer">⏱ ELAPSED: <span id="timeCounter">0</span>s</div>
         </div>
         <div id="gameBoard"></div>
-        <button id="restartLevelButton" onclick="restartCurrentLevel()">↻ RESET SYSTEM</button>
-        <button id="nextLevelButton" onclick="nextLevel()">NEXT LEVEL →</button>
+        <div class="keyboard-help">Use arrow keys or WASD to navigate • SPACE/ENTER to select • ESC to pause</div>
+        <button id="nextLevelButton" tabindex="0">NEXT LEVEL ▶</button>
+        <button id="restartLevelButton" tabindex="0">↻ RESTART LEVEL</button>
+    </div>
+
+    <div class="pause-overlay" id="pauseOverlay">
+        <div class="pause-message">⏸ PAUSED</div>
+        <button id="resumeBtn" tabindex="0">▶ RESUME</button>
     </div>
 
     <script>
-        // Tech-themed emoji sets for each level
-        const techEmojis = ['💻', '🖥️', '⌨️', '🖱️', '🔌', '💾', '📱', '⚡'];
-        const aiEmojis = ['🤖', '🧠', '👾', '🛸', '🔮', '⚙️', '🎯', '💡'];
-        const dataEmojis = ['📊', '📈', '🔬', '🧬', '🔭', '🌐', '💎', '🔑', '🎮','⚛️','🔋','📡','🛰️','💿','🎛️','🔊','📟','🖲️'];
+        const techEmojis = ['🤖', '🚀', '💻', '⚡'];
+        const aiEmojis = ['🧠', '🎯', '💡', '🔮', '⚛️', '🌟', '💎', '🎨'];
+        const dataEmojis = ['📊', '🔥', '💫', '🌈', '🎭', '🎪', '🎬', '🎸', '🎺', '🎻', '🎼', '🎤', '🎧', '🎮', '🎲', '🎯', '🏆', '🚁'];
 
-        // Background tech emojis
-        const bgEmojis = ['💻', '🤖', '⚡', '🧠', '🔮', '⚙️', '💾', '🛸', '🌐', '💡', '🔬', '📡', '🎯', '👾', '⚛️', '🔋', '💎', '🎮'];
-        const emojiBg = document.getElementById('emojiBg');
-        function generateEmojis() {
-            for(let i=0;i<32;i++) {
-                const s = document.createElement('span');
-                s.innerText = bgEmojis[Math.floor(Math.random()*bgEmojis.length)];
-                s.style.left = Math.random()*96 + 'vw';
-                s.style.top = Math.random()*120 + 'vh'; // Spread across screen height
-                s.style.fontSize = (2.2 + Math.random()*2) + 'rem';
-                s.style.animationDuration = (10 + Math.random()*8) + 's';
-                s.style.animationDelay = -(Math.random()*15)+'s'; // Negative delay for immediate presence
-                emojiBg.appendChild(s);
-            }
-        }
-        generateEmojis();
-
-        let level = 2; // 2, 4, 6 grid sizes
+        let level = 2;
         let tiles = [];
         let selectedTiles = [];
         let completedLevels = [];
-        let moves = 0;
-        let timeElapsed = 0;
         let timerInterval = null;
+        let timeElapsed = 0;
+        let moves = 0;
         let levelTimes = [];
         let isPaused = false;
+        let focusedTileIndex = 0;
+        let gridSize = 2;
 
-        function updateLevelIndicator() {
-            const dots = document.querySelectorAll('.level-dot');
-            dots.forEach(dot => {
-                const dotLevel = parseInt(dot.dataset.level);
-                dot.classList.remove('active', 'completed');
-                
-                if (completedLevels.includes(dotLevel)) {
-                    dot.classList.add('completed');
-                } else if (dotLevel === level) {
-                    dot.classList.add('active');
-                }
-            });
-        }
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-        function updateMoveCounter() {
-            document.getElementById('moveCounter').innerText = moves;
-        }
-
-        function startTimer() {
-            timeElapsed = 0;
-            updateTimerDisplay();
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timeElapsed++;
-                updateTimerDisplay();
-                
-                // Add warning effect when time is running out
-                const timerElement = document.getElementById('timer');
-                if (timeElapsed >= 50 && timeElapsed < 60) {
-                    timerElement.classList.add('warning');
-                } else if (timeElapsed >= 60) {
-                    // Time's up! Restart the level
-                    stopTimer();
-                    timeOutRestart();
-                } else {
-                    timerElement.classList.remove('warning');
-                }
-            }, 1000);
-        }
-
-        function resumeTimer() {
-            // Resume timer from current timeElapsed value without resetting
-            updateTimerDisplay();
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timeElapsed++;
-                updateTimerDisplay();
-                
-                // Add warning effect when time is running out
-                const timerElement = document.getElementById('timer');
-                if (timeElapsed >= 50 && timeElapsed < 60) {
-                    timerElement.classList.add('warning');
-                } else if (timeElapsed >= 60) {
-                    // Time's up! Restart the level
-                    stopTimer();
-                    timeOutRestart();
-                } else {
-                    timerElement.classList.remove('warning');
-                }
-            }, 1000);
-        }
-
-        function stopTimer() {
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-            }
-        }
-
-        function updateTimerDisplay() {
-            document.getElementById('timeCounter').innerText = timeElapsed;
+        function playClickSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
         }
 
         function playSuccessSound() {
-            // Create audio context
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // Create oscillators for an enthusiastic "Yeahhh!" sound
-            const playNote = (frequency, startTime, duration, volume = 0.3) => {
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.value = frequency;
-                oscillator.type = 'square'; // More energetic sound
-                
-                gainNode.gain.setValueAtTime(volume, audioContext.currentTime + startTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + startTime + duration);
-                
-                oscillator.start(audioContext.currentTime + startTime);
-                oscillator.stop(audioContext.currentTime + startTime + duration);
-            };
-            
-            // Play an energetic "Yeahhh!" melody - ascending triumphant notes
-            playNote(392.00, 0, 0.1, 0.25);      // G4
-            playNote(523.25, 0.08, 0.12, 0.3);   // C5
-            playNote(659.25, 0.18, 0.15, 0.35);  // E5
-            playNote(783.99, 0.3, 0.2, 0.4);     // G5
-            playNote(1046.50, 0.45, 0.35, 0.35); // C6 - triumphant high note
-        }
-
-        function timeOutRestart() {
-            console.log('Time out! Showing restart button...');
-            
-            // Show time out message
-            document.getElementById('status').innerHTML = '⚠ TIMEOUT | SYSTEM RESET REQUIRED';
-            document.getElementById('timer').innerHTML = '⏱ ELAPSED: 60s ✖';
-            document.getElementById('timer').classList.remove('warning');
-            
-            // Show restart button
-            document.getElementById('restartLevelButton').style.visibility = 'visible';
-            
-            // Disable all tiles
-            tiles.forEach(tile => {
-                tile.style.pointerEvents = 'none';
-                tile.style.opacity = '0.5';
+            [523.25, 659.25, 783.99].forEach((freq, i) => {
+                setTimeout(() => {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = freq;
+                    osc.type = 'sine';
+                    gain.gain.setValueAtTime(0.15, audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    osc.start(audioContext.currentTime);
+                    osc.stop(audioContext.currentTime + 0.3);
+                }, i * 100);
             });
         }
-        
-        function restartCurrentLevel() {
-            console.log('restartCurrentLevel called for level:', level);
-            // Stop any running timer first
+
+        function startTimer() {
+            console.log('startTimer called');
+            if (timerInterval) {
+                console.log('Clearing existing timer interval');
+                clearInterval(timerInterval);
+            }
+            timeElapsed = 0;
+            document.getElementById('timeCounter').textContent = timeElapsed;
+            timerInterval = setInterval(() => {
+                if (!isPaused) {
+                    timeElapsed++;
+                    document.getElementById('timeCounter').textContent = timeElapsed;
+                    if (timeElapsed > 60) {
+                        document.getElementById('timer').classList.add('warning');
+                    }
+                }
+            }, 1000);
+            console.log('Timer started, interval ID:', timerInterval);
+        }
+
+        function stopTimer() {
+            console.log('stopTimer called, current interval:', timerInterval);
             if (timerInterval) {
                 clearInterval(timerInterval);
                 timerInterval = null;
+                console.log('Timer stopped');
             }
-            
-            // Hide restart button and pause overlay
-            document.getElementById('restartLevelButton').style.visibility = 'hidden';
-            document.getElementById('pauseOverlay').classList.remove('show');
-            
-            // Reset ONLY current level state - keep level and completed levels
-            // DO NOT reset: level, completedLevels, levelTimes
-            console.log('Restarting current level:', level);
-            
-            // Clear the game board completely
-            const gameBoard = document.getElementById('gameBoard');
-            gameBoard.innerHTML = ''; // Remove all existing tiles from DOM
-            
-            // Reset game state variables
-            moves = 0;
-            selectedTiles = [];
-            tiles = [];
-            timeElapsed = 0;
-            isPaused = false;
-            
-            // Reset displays to fresh state
-            updateMoveCounter();
-            updateLevelIndicator();
-            document.getElementById('status').innerHTML = `ACTIONS: <span id="moveCounter">0</span>`;
-            document.getElementById('timer').innerHTML = `⏱ ELAPSED: <span id="timeCounter">0</span>s`;
-            document.getElementById('timer').classList.remove('warning');
-            
-            // Create a completely fresh board with new shuffled tiles
-            console.log('About to call createBoard()');
-            createBoard();
-            console.log('createBoard() completed, tiles array length:', tiles.length);
-            console.log('About to call startTimer()');
-            startTimer();
-            console.log('startTimer() completed, timerInterval:', timerInterval);
         }
 
-        document.getElementById('startBtn').onclick = function() {
-            document.getElementById('homePage').style.display = "none";
-            document.getElementById('gameContainer').style.display = "flex";
-            document.getElementById('backBtn').style.display = "block";
-            document.getElementById('pauseBtn').style.display = "block";
-            document.getElementById('emojiBg').classList.remove('show'); // Hide background during game
-            isPaused = false;
-            level = 2; // start at level 2
-            tiles = [];
-            selectedTiles = [];
+        function updateMoveCounter() {
+            document.getElementById('moveCounter').textContent = moves;
+        }
+
+        function updateLevelIndicator() {
+            const indicator = document.getElementById('levelIndicator');
+            indicator.innerHTML = '';
+            [2, 4, 6].forEach(lvl => {
+                let dot = document.createElement('div');
+                dot.classList.add('level-dot');
+                dot.textContent = lvl;
+                if (lvl === level) {
+                    dot.classList.add('active');
+                }
+                if (completedLevels.includes(lvl)) {
+                    dot.classList.add('completed');
+                }
+                indicator.appendChild(dot);
+            });
+        }
+
+        function toggleEmojiBackground(show) {
+            const bg = document.getElementById('emojiBg');
+            if (show) {
+                bg.classList.add('show');
+                bg.innerHTML = '';
+                const allEmojis = [...techEmojis, ...aiEmojis, ...dataEmojis];
+                for (let i = 0; i < 25; i++) {
+                    let span = document.createElement('span');
+                    span.textContent = allEmojis[Math.floor(Math.random() * allEmojis.length)];
+                    span.style.left = Math.random() * 100 + '%';
+                    span.style.top = Math.random() * 100 + '%';
+                    span.style.animationDelay = Math.random() * 5 + 's';
+                    bg.appendChild(span);
+                }
+            } else {
+                bg.classList.remove('show');
+            }
+        }
+
+        document.getElementById('startBtn').addEventListener('click', showInstructions);
+        document.getElementById('startBtn').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                showInstructions();
+            }
+        });
+
+        function showInstructions() {
+            playClickSound();
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('instructionsScreen').classList.add('show');
+            document.getElementById('beginGameBtn').focus();
+        }
+
+        document.getElementById('beginGameBtn').addEventListener('click', startGame);
+        document.getElementById('beginGameBtn').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                startGame();
+            }
+        });
+
+        function startGame() {
+            playClickSound();
+            console.log('startGame called');
+            document.getElementById('instructionsScreen').classList.remove('show');
+            document.getElementById('gameContainer').style.display = 'flex';
+            document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('pauseBtn').style.display = 'block';
+            toggleEmojiBackground(true);
+            level = 2;
             completedLevels = [];
             moves = 0;
             timeElapsed = 0;
             levelTimes = [];
-            updateMoveCounter();
-            updateLevelIndicator();
             createBoard();
             startTimer();
-        };
+            focusedTileIndex = 0;
+            updateTileFocus();
+        }
 
-        document.getElementById('pauseBtn').onclick = function() {
-            if (!isPaused) {
-                pauseGame();
-            } else {
-                resumeGame();
-            }
-        };
-
-        document.getElementById('resumeBtn').onclick = function() {
-            resumeGame();
-        };
-
-        function pauseGame() {
-            isPaused = true;
+        document.getElementById('backBtn').onclick = () => {
+            playClickSound();
             stopTimer();
-            document.getElementById('pauseOverlay').classList.add('show');
-            document.getElementById('pauseBtn').innerText = '▶️ Resume';
-            // Disable tile clicks
-            tiles.forEach(tile => {
-                tile.style.pointerEvents = 'none';
-            });
-        }
-
-        function resumeGame() {
-            isPaused = false;
-            resumeTimer();
-            document.getElementById('pauseOverlay').classList.remove('show');
-            document.getElementById('pauseBtn').innerText = '|| PAUSE';
-            // Enable tile clicks
-            tiles.forEach(tile => {
-                if (tile.style.visibility !== 'hidden') {
-                    tile.style.pointerEvents = 'auto';
-                }
-            });
-        }
-
-        document.getElementById('backBtn').onclick = function() {
-            // Confirm before going back if game is in progress
-            if (document.getElementById('gameContainer').style.display === "flex") {
-                if (confirm("Are you sure you want to go back? Your progress will be lost.")) {
-                    stopTimer();
-                    isPaused = false;
-                    document.getElementById('pauseOverlay').classList.remove('show');
-                    document.getElementById('gameContainer').style.display = "none";
-                    document.getElementById('homePage').style.display = "flex";
-                    document.getElementById('backBtn').style.display = "none";
-                    document.getElementById('pauseBtn').style.display = "none";
-                    document.getElementById('emojiBg').classList.add('show'); // Show background on home page
-                    // Reset game state
-                    level = 2;
-                    tiles = [];
-                    selectedTiles = [];
-                    completedLevels = [];
-                    moves = 0;
-                    timeElapsed = 0;
-                    levelTimes = [];
-                }
+            document.getElementById('gameContainer').style.display = 'none';
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = 'none';
+            toggleEmojiBackground(false);
+            document.getElementById('home').style.display = 'flex';
+            if (isPaused) {
+                togglePause();
             }
+        };
+
+        document.getElementById('pauseBtn').onclick = togglePause;
+        document.getElementById('resumeBtn').onclick = togglePause;
+
+        function togglePause() {
+            playClickSound();
+            isPaused = !isPaused;
+            document.getElementById('pauseOverlay').classList.toggle('show');
+            if (isPaused) {
+                document.getElementById('resumeBtn').focus();
+            } else {
+                document.getElementById('gameBoard').focus();
+                updateTileFocus();
+            }
+        }
+
+        document.getElementById('nextLevelButton').onclick = nextLevel;
+        document.getElementById('restartLevelButton').onclick = () => {
+            playClickSound();
+            moves = 0;
+            timeElapsed = 0;
+            document.getElementById('status').innerHTML = `ACTIONS: <span id="moveCounter">${moves}</span>`;
+            document.getElementById('timer').innerHTML = `⏱ ELAPSED: <span id="timeCounter">0</span>s`;
+            document.getElementById('timer').classList.remove('warning');
+            createBoard();
+            startTimer();
         };
 
         function createBoard() {
@@ -986,7 +1087,7 @@
             document.getElementById('restartLevelButton').style.visibility = "hidden";
             const gameBoard = document.getElementById('gameBoard');
             gameBoard.innerHTML = '';
-            let gridSize, numPairs, emojis;
+            let numPairs, emojis;
             if (level === 2) {
                 gridSize = 2; numPairs = 2;
                 emojis = techEmojis;
@@ -1001,7 +1102,6 @@
             gameBoard.style.gridTemplateColumns = `repeat(${gridSize}, minmax(35px, 80px))`;
             gameBoard.style.gridTemplateRows = `repeat(${gridSize}, minmax(45px, 100px))`;
 
-            // Prepare paired and shuffled tiles
             let tilePairs = emojis.slice(0, numPairs).concat(emojis.slice(0, numPairs));
             tilePairs.sort(() => Math.random() - 0.5);
             console.log('Tile pairs prepared:', tilePairs.length);
@@ -1014,12 +1114,13 @@
                 tile.classList.add('tile');
                 tile.dataset.symbol = tilePairs[i];
                 tile.innerHTML = "🔒";
-                // Explicitly ensure tiles are enabled and visible
                 tile.style.pointerEvents = 'auto';
                 tile.style.opacity = '1';
                 tile.style.visibility = 'visible';
                 tile.addEventListener('click', () => {
                     console.log('Tile click event fired for tile', i);
+                    focusedTileIndex = i;
+                    updateTileFocus();
                     selectTile(tile);
                 });
                 gameBoard.appendChild(tile);
@@ -1029,11 +1130,93 @@
             console.log('Created', tiles.length, 'tiles');
             console.log('GameBoard children:', gameBoard.children.length);
             updateLevelIndicator();
+            focusedTileIndex = 0;
+            updateTileFocus();
         }
+
+        function updateTileFocus() {
+            tiles.forEach((tile, index) => {
+                if (index === focusedTileIndex) {
+                    tile.classList.add('keyboard-focus');
+                } else {
+                    tile.classList.remove('keyboard-focus');
+                }
+            });
+        }
+
+        function moveFocus(direction) {
+            const currentRow = Math.floor(focusedTileIndex / gridSize);
+            const currentCol = focusedTileIndex % gridSize;
+            let newRow = currentRow;
+            let newCol = currentCol;
+
+            switch(direction) {
+                case 'up':
+                    newRow = currentRow > 0 ? currentRow - 1 : gridSize - 1;
+                    break;
+                case 'down':
+                    newRow = currentRow < gridSize - 1 ? currentRow + 1 : 0;
+                    break;
+                case 'left':
+                    newCol = currentCol > 0 ? currentCol - 1 : gridSize - 1;
+                    break;
+                case 'right':
+                    newCol = currentCol < gridSize - 1 ? currentCol + 1 : 0;
+                    break;
+            }
+
+            focusedTileIndex = newRow * gridSize + newCol;
+            updateTileFocus();
+            playClickSound();
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            // Don't handle keyboard if we're not in the game
+            if (document.getElementById('gameContainer').style.display === 'none') {
+                return;
+            }
+
+            // Don't handle if paused (except ESC)
+            if (isPaused && e.key !== 'Escape') {
+                return;
+            }
+
+            // Pause/Resume with ESC
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                togglePause();
+                return;
+            }
+
+            // Don't handle keyboard if timer is stopped (during match check timeout)
+            if (!timerInterval) {
+                return;
+            }
+
+            // Arrow keys and WASD navigation
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+                e.preventDefault();
+                moveFocus('up');
+            } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+                e.preventDefault();
+                moveFocus('down');
+            } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                e.preventDefault();
+                moveFocus('left');
+            } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                e.preventDefault();
+                moveFocus('right');
+            } else if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (tiles[focusedTileIndex]) {
+                    selectTile(tiles[focusedTileIndex]);
+                }
+            }
+        });
 
         function selectTile(tile) {
             console.log('selectTile called, timerInterval:', timerInterval);
-            // Don't allow tile selection if timer is stopped (during timeout)
             if (!timerInterval) {
                 console.log('Timer not running, blocking tile selection');
                 return;
@@ -1044,6 +1227,7 @@
                 tile.classList.add('selected');
                 tile.innerHTML = tile.dataset.symbol;
                 selectedTiles.push(tile);
+                playClickSound();
                 console.log('Tile selected, selectedTiles length:', selectedTiles.length);
             }
             if (selectedTiles.length === 2) {
@@ -1070,11 +1254,9 @@
 
         function checkMatch() {
             if (selectedTiles[0].dataset.symbol === selectedTiles[1].dataset.symbol) {
-                // Match found!
                 selectedTiles[0].classList.add('matched');
                 selectedTiles[1].classList.add('matched');
                 
-                // Create confetti at tile positions
                 const rect1 = selectedTiles[0].getBoundingClientRect();
                 const rect2 = selectedTiles[1].getBoundingClientRect();
                 createConfetti(rect1.left + rect1.width / 2, rect1.top + rect1.height / 2);
@@ -1097,7 +1279,6 @@
 
         function createFirecrackerEffect() {
             const celebrationEmojis = ['⚡', '💥', '✨', '🌟', '💫', '⭐', '💎', '🔮', '⚛️', '💠'];
-            // Create multiple bursts from different positions
             for (let burst = 0; burst < 5; burst++) {
                 setTimeout(() => {
                     const x = Math.random() * window.innerWidth;
@@ -1130,10 +1311,7 @@
                 stopTimer();
                 levelTimes.push({level: level, time: timeElapsed, moves: moves});
                 
-                // Play success sound
                 playSuccessSound();
-                
-                // Create firecracker effect with emojis
                 createFirecrackerEffect();
                 
                 if (!completedLevels.includes(level)) {
@@ -1152,16 +1330,17 @@
                     document.getElementById('timer').innerHTML = `⏱ TOTAL TIME: ${totalTime}s`;
                 }
                 document.getElementById('nextLevelButton').style.visibility = "visible";
+                document.getElementById('nextLevelButton').focus();
             }
         }
 
         function nextLevel() {
+            playClickSound();
             if (level === 2) {
                 level = 4;
             } else if (level === 4) {
                 level = 6;
             } else {
-                // Game completed - restart
                 level = 2;
                 completedLevels = [];
                 moves = 0;
