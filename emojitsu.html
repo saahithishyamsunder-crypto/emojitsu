@@ -938,16 +938,28 @@
             }
             timeElapsed = 0;
             document.getElementById('timeCounter').textContent = timeElapsed;
+            document.getElementById('timer').classList.remove('warning');
             timerInterval = setInterval(() => {
                 if (!isPaused) {
                     timeElapsed++;
                     document.getElementById('timeCounter').textContent = timeElapsed;
-                    if (timeElapsed > 60) {
+                    if (timeElapsed >= 50) {
                         document.getElementById('timer').classList.add('warning');
+                    }
+                    if (timeElapsed >= 60) {
+                        stopTimer();
+                        handleTimeout();
                     }
                 }
             }, 1000);
             console.log('Timer started, interval ID:', timerInterval);
+        }
+
+        function handleTimeout() {
+            document.getElementById('status').innerHTML = `⏱ TIME EXPIRED | ${moves} ACTIONS`;
+            document.getElementById('timer').innerHTML = `⏱ TIME: 60s (MAX)`;
+            document.getElementById('restartLevelButton').style.visibility = "visible";
+            document.getElementById('restartLevelButton').focus();
         }
 
         function stopTimer() {
